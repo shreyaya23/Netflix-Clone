@@ -1,4 +1,5 @@
 Netflix Clone
+
 A Netflix-inspired application built using the MERN stack (MongoDB, Express.js, React.js, Node.js) that allows users to search and explore movies, TV shows, and more. It includes user authentication, search history tracking, and dynamic content search.
 
 Features
