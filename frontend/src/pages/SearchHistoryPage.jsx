@@ -1,15 +1,22 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar.jsx";
+import Navbar from "../components/Navbar";
+import { SMALL_IMG_BASE_URL } from "../utils/constants";
 import { Trash } from "lucide-react";
 import toast from "react-hot-toast";
 
 function formatDate(dateString) {
+	// Create a Date object from the input date string
 	const date = new Date(dateString);
+
 	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+	// Extract the month, day, and year from the Date object
 	const month = monthNames[date.getUTCMonth()];
 	const day = date.getUTCDate();
 	const year = date.getUTCFullYear();
+
+	// Return the formatted date string
 	return `${month} ${day}, ${year}`;
 }
 
@@ -19,10 +26,9 @@ const SearchHistoryPage = () => {
 	useEffect(() => {
 		const getSearchHistory = async () => {
 			try {
-				const res = await axios.get(`/api/v1/search/history`); // Fetch stored history from your backend
+				const res = await axios.get(`/api/v1/search/history`);
 				setSearchHistory(res.data.content);
 			} catch (error) {
-				toast.error("Failed to fetch search history.");
 				setSearchHistory([]);
 			}
 		};
@@ -31,22 +37,21 @@ const SearchHistoryPage = () => {
 
 	const handleDelete = async (entry) => {
 		try {
-			await axios.delete(`/api/v1/search/history/${entry.id}`); // Delete the entry from your backend
+			await axios.delete(`/api/v1/search/history/${entry.id}`);
 			setSearchHistory(searchHistory.filter((item) => item.id !== entry.id));
-			toast.success("Search history item deleted.");
 		} catch (error) {
-			toast.error("Failed to delete search history item.");
+			toast.error("Failed to delete search item");
 		}
 	};
 
 	if (searchHistory?.length === 0) {
 		return (
-			<div className="bg-black min-h-screen text-white">
+			<div className='bg-black min-h-screen text-white'>
 				<Navbar />
-				<div className="max-w-6xl mx-auto px-4 py-8">
-					<h1 className="text-3xl font-bold mb-8">Search History</h1>
-					<div className="flex justify-center items-center h-96">
-						<p className="text-xl">No search history found</p>
+				<div className='max-w-6xl mx-auto px-4 py-8'>
+					<h1 className='text-3xl font-bold mb-8'>Search History</h1>
+					<div className='flex justify-center items-center h-96'>
+						<p className='text-xl'>No search history found</p>
 					</div>
 				</div>
 			</div>
@@ -54,29 +59,29 @@ const SearchHistoryPage = () => {
 	}
 
 	return (
-		<div className="bg-black text-white min-h-screen">
+		<div className='bg-black text-white min-h-screen'>
 			<Navbar />
 
-			<div className="max-w-6xl mx-auto px-4 py-8">
-				<h1 className="text-3xl font-bold mb-8">Search History</h1>
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+			<div className='max-w-6xl mx-auto px-4 py-8'>
+				<h1 className='text-3xl font-bold mb-8'>Search History</h1>
+				<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4'>
 					{searchHistory?.map((entry) => (
-						<div key={entry.id} className="bg-gray-800 p-4 rounded flex items-start">
+						<div key={entry.id} className='bg-gray-800 p-4 rounded flex items-start'>
 							<img
-								src={entry.imageUrl !== "N/A" ? entry.imageUrl : "/placeholder.jpg"} // Use OMDb image or placeholder
-								alt={entry.title}
-								className="size-16 rounded-full object-cover mr-4"
+								src={SMALL_IMG_BASE_URL + entry.image}
+								alt='History image'
+								className='size-16 rounded-full object-cover mr-4'
 							/>
-							<div className="flex flex-col">
-								<span className="text-white text-lg">{entry.title}</span>
-								<span className="text-gray-400 text-sm">{formatDate(entry.createdAt)}</span>
+							<div className='flex flex-col'>
+								<span className='text-white text-lg'>{entry.title}</span>
+								<span className='text-gray-400 text-sm'>{formatDate(entry.createdAt)}</span>
 							</div>
 
 							<span
-								className={`py-1 px-3 min-w-20 text-center rounded-full text-sm ml-auto ${
+								className={`py-1 px-3 min-w-20 text-center rounded-full text-sm  ml-auto ${
 									entry.searchType === "movie"
 										? "bg-red-600"
-										: entry.searchType === "series"
+										: entry.searchType === "tv"
 										? "bg-blue-600"
 										: "bg-green-600"
 								}`}
@@ -84,7 +89,7 @@ const SearchHistoryPage = () => {
 								{entry.searchType[0].toUpperCase() + entry.searchType.slice(1)}
 							</span>
 							<Trash
-								className="size-5 ml-4 cursor-pointer hover:fill-red-600 hover:text-red-600"
+								className='size-5 ml-4 cursor-pointer hover:fill-red-600 hover:text-red-600'
 								onClick={() => handleDelete(entry)}
 							/>
 						</div>
@@ -94,5 +99,4 @@ const SearchHistoryPage = () => {
 		</div>
 	);
 };
-
 export default SearchHistoryPage;
